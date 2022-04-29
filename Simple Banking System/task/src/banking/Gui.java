@@ -1,7 +1,7 @@
 package banking;
 
 import java.util.Scanner;
-
+// Gui class for displaying ui
 public class Gui {
     public static int openingPage() {
         System.out.println("1. Create an account");

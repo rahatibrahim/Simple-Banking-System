@@ -1,5 +1,6 @@
 package banking;
 
+// The program starts from here
 public class Main {
     public static void main(String[] args) {
         int input = Gui.openingPage();
