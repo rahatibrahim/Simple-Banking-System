@@ -15,10 +15,11 @@ public class Gui {
     }
 
     public static void registerPage() {
-        long cardNum = 4000000000000000L + numGenerator.cardNum();
+        //long cardNum = 400000000000000L + numGenerator.cardNum();
+        long cardNum = Long.parseLong(numGenerator.cardNum());
         int pinNum = numGenerator.pinNum();
         while (Account.accounts.containsKey(cardNum))
-            cardNum = 4000000000000000L + numGenerator.cardNum();
+            cardNum = Long.parseLong(numGenerator.cardNum());
         Account.accounts.put(cardNum, pinNum);
         System.out.println("Your card has been created");
         System.out.println("Your card number:");

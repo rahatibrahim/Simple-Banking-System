@@ -3,8 +3,27 @@ package banking;
 import java.util.Random;
 
 public class numGenerator {
-    public static long cardNum() {
-        return (long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L;
+    public static String cardNum() {
+        long num = (long) Math.floor(Math.random() * 900_000_000L) + 100_000_000L;
+        String numString = "400000" + num;
+        int total = 0;
+        for (int i = 0; i < numString.length(); i++) {
+            if (i % 2 == 0) {
+                int temp = Character.getNumericValue(numString.charAt(i)) * 2;
+                if (temp > 9) {
+                    temp -= 9;
+                }
+                total += temp;
+            }
+            else {
+                total += Character.getNumericValue(numString.charAt(i));
+            }
+        }
+        int checksum = 10 - (total % 10);
+        if (checksum == 10) {
+            checksum = 0;
+        }
+        return numString + checksum;
     }
 
     public static int pinNum() {
