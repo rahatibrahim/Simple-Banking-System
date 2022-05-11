@@ -1,7 +1,13 @@
 package banking;
 
+import org.sqlite.SQLiteDataSource;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
-// Gui class for displaying ui
+
 public class Gui {
     public static int openingPage() {
         System.out.println("1. Create an account");
@@ -14,13 +20,11 @@ public class Gui {
         return input;
     }
 
-    public static void registerPage() {
-        //long cardNum = 400000000000000L + numGenerator.cardNum();
+    public static void registerPage(String dbUrl) {
         long cardNum = Long.parseLong(numGenerator.cardNum());
         int pinNum = numGenerator.pinNum();
-        while (Account.accounts.containsKey(cardNum))
-            cardNum = Long.parseLong(numGenerator.cardNum());
-        Account.accounts.put(cardNum, pinNum);
+        //Account.accounts.put(cardNum, pinNum);
+        Account.adding("" + cardNum, "" + pinNum, dbUrl);
         System.out.println("Your card has been created");
         System.out.println("Your card number:");
         System.out.println(cardNum);
@@ -29,7 +33,7 @@ public class Gui {
         System.out.println();
     }
 
-    public static boolean logInPage() {
+    public static boolean logInPage(String dbUrl) {
         System.out.println("Enter your card number:");
         System.out.print(">");
         Scanner sc = new Scanner(System.in);
@@ -38,20 +42,34 @@ public class Gui {
         System.out.print(">");
         int pinNum = sc.nextInt();
         System.out.println();
-        try {
-            if (Account.accounts.get(cardNum) == pinNum) {
-                System.out.println("You have successfully logged in!");
-                System.out.println();
-                return true;
-            } else {
-                System.out.println("Wrong card number or PIN!");
-                System.out.println();
-                return false;
+
+        //String dbUrl = "jdbc:sqlite:SimpleBanking.db";
+        SQLiteDataSource dataSource = new SQLiteDataSource();
+        dataSource.setUrl(dbUrl);
+        String sql = "select number, pin from card where number = '" + cardNum +
+                "' and pin = '" + pinNum + "'";
+        try (Connection con = dataSource.getConnection()) {
+            // Statement creation
+            try (Statement statement = con.createStatement()) {
+                // Statement execution
+                try (ResultSet greatHouses = statement.executeQuery(sql)) {
+                    if (greatHouses.next()) {
+                        System.out.println("You have successfully logged in!");
+                        System.out.println();
+                        return true;
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (NullPointerException e) {
-            System.out.println("Wrong card number or PIN!");
-            System.out.println();
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
+
+        System.out.println("Wrong card number or PIN!");
+        System.out.println();
         return false;
     }
 

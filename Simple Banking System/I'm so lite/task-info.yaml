@@ -489,6 +489,148 @@ files:
         }
     }
   learner_created: false
+- name: src/banking/Gui.java
+  visible: true
+  text: |-
+    package banking;
+
+    import java.util.Scanner;
+    // Gui class for displaying ui
+    public class Gui {
+        public static int openingPage() {
+            System.out.println("1. Create an account");
+            System.out.println("2. Log into account");
+            System.out.println("0. Exit");
+            System.out.print(">");
+            Scanner sc = new Scanner(System.in);
+            int input = sc.nextInt();
+            System.out.println();
+            return input;
+        }
+
+        public static void registerPage() {
+            //long cardNum = 400000000000000L + numGenerator.cardNum();
+            long cardNum = Long.parseLong(numGenerator.cardNum());
+            int pinNum = numGenerator.pinNum();
+            while (Account.accounts.containsKey(cardNum))
+                cardNum = Long.parseLong(numGenerator.cardNum());
+            Account.accounts.put(cardNum, pinNum);
+            System.out.println("Your card has been created");
+            System.out.println("Your card number:");
+            System.out.println(cardNum);
+            System.out.println("Your card PIN:");
+            System.out.println(pinNum);
+            System.out.println();
+        }
+
+        public static boolean logInPage() {
+            System.out.println("Enter your card number:");
+            System.out.print(">");
+            Scanner sc = new Scanner(System.in);
+            long cardNum = sc.nextLong();
+            System.out.println("Enter your PIN");
+            System.out.print(">");
+            int pinNum = sc.nextInt();
+            System.out.println();
+            try {
+                if (Account.accounts.get(cardNum) == pinNum) {
+                    System.out.println("You have successfully logged in!");
+                    System.out.println();
+                    return true;
+                } else {
+                    System.out.println("Wrong card number or PIN!");
+                    System.out.println();
+                    return false;
+                }
+            } catch (NullPointerException e) {
+                System.out.println("Wrong card number or PIN!");
+                System.out.println();
+            }
+            return false;
+        }
+
+        public static int homePage() {
+            System.out.println("1. Balance");
+            System.out.println("2. Log out");
+            System.out.println("0. Exit");
+            System.out.print(">");
+            Scanner sc = new Scanner(System.in);
+            int input = sc.nextInt();
+            System.out.println();
+            if (input == 1) {
+                System.out.println("Balance: 0");
+                System.out.println();
+                return 1;
+            } else if (input == 2) {
+                System.out.println("You have successfully logged out!");
+                System.out.println();
+                return 2;
+            } else if (input == 0) {
+                return 0;
+            }
+            return 0;
+        }
+    }
+  learner_created: true
+- name: src/banking/numGenerator.java
+  visible: true
+  text: |-
+    package banking;
+
+    import java.util.Random;
+
+    public class numGenerator {
+        public static String cardNum() {
+            long num = (long) Math.floor(Math.random() * 900_000_000L) + 100_000_000L;
+            String numString = "400000" + num;
+            int total = 0;
+            for (int i = 0; i < numString.length(); i++) {
+                if (i % 2 == 0) {
+                    int temp = Character.getNumericValue(numString.charAt(i)) * 2;
+                    if (temp > 9) {
+                        temp -= 9;
+                    }
+                    total += temp;
+                }
+                else {
+                    total += Character.getNumericValue(numString.charAt(i));
+                }
+            }
+            int checksum = 10 - (total % 10);
+            if (checksum == 10) {
+                checksum = 0;
+            }
+            return numString + checksum;
+        }
+
+        public static int pinNum() {
+            int lower = 1000;
+            int upper = 9999;
+            Random random = new Random();
+            return random.nextInt(upper - lower + 1) + lower;
+        }
+    }
+  learner_created: true
+- name: src/banking/Account.java
+  visible: true
+  text: |
+    package banking;
+
+    import java.util.HashMap;
+
+    public class Account {
+        public static HashMap<Long, Integer> accounts = new HashMap<>();
+    }
+  learner_created: true
+- name: SimpleBanking.db
+  visible: true
+  learner_created: true
+- name: card.s3db
+  visible: true
+  learner_created: true
 feedback_link: https://hyperskill.org/learn/step/8427#comment
-status: Unchecked
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Wed, 11 May 2022 14:29:35 UTC
 record: -1

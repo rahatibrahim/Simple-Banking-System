@@ -1,19 +1,40 @@
 package banking;
 
-// The program starts from here
+import org.sqlite.SQLiteDataSource;
+import java.sql.*;
+
 public class Main {
     public static void main(String[] args) {
+        String url = "jdbc:sqlite:" + args[1];
+        SQLiteDataSource dataSource = new SQLiteDataSource();
+        dataSource.setUrl(url);
+
+        try (Connection con = dataSource.getConnection()) {
+            // Statement creation
+            try (Statement statement = con.createStatement()) {
+                // Statement execution
+                statement.executeUpdate("CREATE TABLE IF NOT EXISTS card (" +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "number TEXT NOT NULL," +
+                        "pin TEXT NOT NULL," +
+                        "balance INTEGER DEFAULT 0)");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
         int input = Gui.openingPage();
         while (input != 0) {
             if (input == 1) {
-                Gui.registerPage();
+                Gui.registerPage(url);
                 input = Gui.openingPage();
             } else if (input == 2) {
-                boolean flag = Gui.logInPage();
+                boolean flag = Gui.logInPage(url);
                 if (!flag) {
                     input = Gui.openingPage();
-                }
-                else {
+                } else {
                     int homePageInput = Gui.homePage();
                     while (homePageInput != 0) {
                         if (homePageInput == 1) {
