@@ -32,4 +32,23 @@ public class numGenerator {
         Random random = new Random();
         return random.nextInt(upper - lower + 1) + lower;
     }
+
+    public static boolean luhnAlgorithmCheck(String numString) {
+        //long card = Long.parseLong(num);
+        int total = 0;
+        for (int i = 0; i < numString.length() - 1; i++) {
+            if (i % 2 == 0) {
+                int temp = Character.getNumericValue(numString.charAt(i)) * 2;
+                if (temp > 9) {
+                    temp -= 9;
+                }
+                total += temp;
+            }
+            else {
+                total += Character.getNumericValue(numString.charAt(i));
+            }
+        }
+        total += Character.getNumericValue(numString.charAt(numString.length() - 1));
+        return total % 10 == 0;
+    }
 }

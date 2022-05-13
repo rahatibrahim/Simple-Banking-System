@@ -1,6 +1,7 @@
 package banking;
 
 import org.sqlite.SQLiteDataSource;
+
 import java.sql.*;
 
 public class Main {
@@ -21,38 +22,38 @@ public class Main {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
 
-        int input = Gui.openingPage();
-        while (input != 0) {
-            if (input == 1) {
-                Gui.registerPage(url);
-                input = Gui.openingPage();
-            } else if (input == 2) {
-                boolean flag = Gui.logInPage(url);
-                if (!flag) {
+            int input = Gui.openingPage();
+            while (input != 0) {
+                if (input == 1) {
+                    Gui.registerPage(url);
                     input = Gui.openingPage();
-                } else {
-                    int homePageInput = Gui.homePage();
-                    while (homePageInput != 0) {
-                        if (homePageInput == 1) {
-                            homePageInput = Gui.homePage();
-                        } else if (homePageInput == 2) {
-                            input = Gui.openingPage();
-                            break;
+                } else if (input == 2) {
+                    String cardNum = Gui.logInPage(url);
+                    if (cardNum == null) {
+                        input = Gui.openingPage();
+                    } else {
+                        int homePageInput = Gui.homePage(url, cardNum);
+                        while (homePageInput != 0) {
+                            if (homePageInput == 1) {
+                                homePageInput = Gui.homePage(url, cardNum);
+                            } else if (homePageInput == 2) {
+                                input = Gui.openingPage();
+                                break;
+                            }
+                        }
+                        if (homePageInput == 0) {
+                            input = 0;
                         }
                     }
-                    if (homePageInput == 0) {
-                        input = 0;
-                    }
+                } else {
+                    System.out.println("Wrong input. Try again.");
+                    System.out.println();
+                    input = Gui.openingPage();
                 }
-            } else {
-                System.out.println("Wrong input. Try again.");
-                System.out.println();
-                input = Gui.openingPage();
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         System.out.println("Bye!");
     }
